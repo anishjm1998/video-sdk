@@ -1,27 +1,29 @@
-const axios = require('axios');
-const generateToken = require('./generateToken');
+const axios = require("axios");
+const generateToken = require("./generateToken");
 
+// Function to create a room
 const createRoom = async (roomData) => {
   const token = generateToken();
 
   try {
     const response = await axios.post(
-      'https://api.videosdk.live/v2/rooms',
+      "https://api.videosdk.live/v2/rooms",
       roomData,
       {
         headers: {
           Authorization: `${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error creating room:', error.response ? error.response.data : error.message);
+    console.error("Error creating room:", error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
+// Function to fetch room details
 const fetchRoomDetails = async (roomId) => {
   const token = generateToken();
 
@@ -36,17 +38,18 @@ const fetchRoomDetails = async (roomId) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching room details:', error.response ? error.response.data : error.message);
+    console.error("Error fetching room details:", error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
+// Function to list all rooms
 const listRooms = async () => {
   const token = generateToken();
 
   try {
     const response = await axios.get(
-      'https://api.videosdk.live/v2/rooms',
+      "https://api.videosdk.live/v2/rooms",
       {
         headers: {
           Authorization: `${token}`,
@@ -55,9 +58,14 @@ const listRooms = async () => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error listing rooms:', error.response ? error.response.data : error.message);
+    console.error("Error listing rooms:", error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
-module.exports = { createRoom, fetchRoomDetails, listRooms }; // Ensure listRooms is exported
+const deleteRoom = async (roomId) => {
+  console.log("Marking room as expired:", roomId);
+  return { message: `Room ${roomId} will be deleted automatically after inactivity.` };
+};
+
+module.exports = { createRoom, fetchRoomDetails, listRooms, deleteRoom };

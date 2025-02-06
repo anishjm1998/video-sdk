@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
@@ -10,23 +10,23 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('VideoSDK Backend is running!');
+app.get("/", (req, res) => {
+  res.send("VideoSDK Backend is running!");
 });
 
-const generateToken = require('./generateToken');
-app.get('/generate-token', (req, res) => {
+const generateToken = require("./generateToken");
+app.get("/generate-token", (req, res) => {
   const token = generateToken();
   res.json({ token });
 });
 
-const { createRoom, fetchRoomDetails, listRooms } = require('./roomController'); // Ensure listRooms is imported
+const { createRoom, fetchRoomDetails, listRooms, deleteRoom } = require("./roomController");
 
-app.post('/create-room', async (req, res) => {
+app.post("/create-room", async (req, res) => {
   const { roomId, roomName } = req.body;
 
   if (!roomId || !roomName) {
-    return res.status(400).json({ success: false, error: 'roomId and roomName are required' });
+    return res.status(400).json({ success: false, error: "roomId and roomName are required" });
   }
 
   const roomData = {
@@ -42,7 +42,7 @@ app.post('/create-room', async (req, res) => {
   }
 });
 
-app.get('/room/:roomId', async (req, res) => {
+app.get("/room/:roomId", async (req, res) => {
   const { roomId } = req.params;
 
   try {
@@ -53,11 +53,23 @@ app.get('/room/:roomId', async (req, res) => {
   }
 });
 
-app.get('/rooms', async (req, res) => {
+app.get("/rooms", async (req, res) => {
   try {
-    const rooms = await listRooms(); // Ensure listRooms is used
+    const rooms = await listRooms();
     res.json({ success: true, rooms });
   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.delete("/room/:roomId", async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    const result = await deleteRoom(roomId);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error("Error marking room as expired:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

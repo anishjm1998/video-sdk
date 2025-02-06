@@ -8,13 +8,13 @@ const generateToken = () => {
   const secretKey = process.env.VIDEO_SDK_SECRET_KEY;
 
   const options = {
-    expiresIn: '24h', // Token expires in 24 hours
+    expiresIn: '24h', 
     algorithm: 'HS256',
   };
 
   const payload = {
     apikey: apiKey,
-    permissions: ['allow_join', 'allow_mod'], // Define permissions
+    permissions: ['allow_join', 'allow_mod'], 
   };
 
   const token = jwt.sign(payload, secretKey, options);
